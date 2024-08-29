@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Swagger Petstore - OpenAPI 3.0
   description: |
-    - 	Ban hành dành cho nhà cung cấp kết nối api với sản phẩm BH Tai nạn cá nhân
+    - 	Ban hành dành cho nhà cung cấp kết nối api với sản phẩm BH Tai nạn cá nhân1
 
   termsOfService: http://swagger.io/terms/
   contact:
