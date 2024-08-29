@@ -4,7 +4,19 @@ window.onload = function() {
   window["SwaggerUIStandalonePreset"] = window["swagger-ui-standalone-preset"]
   // Build a system
   const ui = SwaggerUIBundle({
-    url: "./openapi.yaml",
+urls: [
+      { url: "./openapi.yaml", name: "OpenAPI" },
+      { url: "./baohiemhuychuyenbay.yaml", name: "Bảo hiểm hủy chuyến bay" },
+      { url: "./InsuranceBodyCar.yaml", name: "BH Vật chất xe ô tô - ( Xe cho thuê theo chuyến)" },
+      { url: "./InsurancePersonalAccident.yaml", name: "BH Tai nạn cá nhân" },
+      { url: "./InsuranceCivilLiabilityforCar.yaml", name: "Bảo hiểm bắt buộc TNDS xe ô tô" },
+      { url: "./InsuranceVoluntarySocial.yaml", name: "BH Xã Hội tự nguyện" },
+      { url: "./InsuranceHouseholdHealth.yaml", name: " BH Y Tế hộ gia đình" },
+      { url: "./InsuranceCivilLiabilityforBike.yaml", name: "Bảo hiểm bắt buộc TNDS xe mô tô - gắn máy" },
+      { url: "./InsuranceCarMaterial.yaml", name: "BH Vật chất xe ô tô" },
+      { url: "./InsuranceHospital.yaml", name: "Bảo hiểm Viện phí" },
+      { url: "./ForeignVisitorsInVietnam.yaml", name: "Khách nước ngoài tại Việt Nam" },
+    ],
     dom_id: "#swagger-ui",
     presets: [
       SwaggerUIBundle.presets.apis,

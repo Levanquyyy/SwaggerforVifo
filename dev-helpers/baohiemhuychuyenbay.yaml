@@ -1,0 +1,477 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: |
+    - Đây là nơi lấy Api Bảo hiểm hủy chuyến bay của Vifo
+
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://sapi.vifo.vn/
+  - url: https://api.vifo.vn/
+tags:
+  - name: Login
+    description: lấy access_token123
+ 
+   
+  - name: insurance
+    description: Tạo tất cả đơn bảo hiểm 
+paths:
+  /v1/clients/web/admin/login:
+    post:
+      tags:
+        - Login
+      summary: Add a UserName and Password
+      description: Add a UserName and Password
+      operationId: v1/clients/web/admin/login
+      requestBody:
+        description: After login, you will get a token
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+  
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'              
+ 
+  /v2/insurance:
+    post:
+      tags:
+        - insurance
+      summary: Tạo tất cả đơn bảo hiểm
+      description: Tạo tất cả đơn bảo hiểm
+      operationId: v2/insurance
+
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsuranceBody'
+      responses:
+        '201':
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponse'
+        '422':
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponseError422'
+        '401':
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponseError401'
+  /v2/insurance/{key}:
+ 
+    get:
+      tags: 
+       - insurance
+      summary: Kiểm tra đơn hàng bảo hiểm 
+      operationId: Kiểm tra đơn hàng bảo hiểm 
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Order number received from the response of the create order API" 
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponseKey'
+ 
+components:
+  schemas:
+    InsuranceResponseKey:
+      type: object
+      properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: ""
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      order_number:
+                        type: string
+                      provider_order_number:
+                        type: string
+                        nullable: true
+                      distributor_order_number:
+                        type: string
+                        nullable: true
+                      amount:
+                        type: number
+                      amount_before_tax:
+                        type: number
+                      refer_id:
+                        type: string
+                        nullable: true
+                      product:
+                        type: object
+                        properties:
+                          family:
+                            type: string
+                          name:
+                            type: string
+                          code:
+                            type: string
+                          provider:
+                            type: string
+                          price:
+                            type: number
+                          price_term:
+                            type: string
+                      commissions:
+                        type: object
+                        properties:
+                          saleman_name:
+                            type: string
+                          commission_amount:
+                            type: number
+                          percent:
+                            type: string
+                          level:
+                            type: number
+                          child:
+                            type: array
+                            items:
+                              type: object
+                              nullable: true
+  
+    InsuranceResponse:
+      type: object
+      properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    properties:
+                      order_number:
+                        type: string
+                      provider_code:
+                        type: string
+                      product:
+                        type: object
+                        properties:
+                          family:
+                            type: string
+                          name:
+                            type: string
+                          code:
+                            type: string
+                          provider:
+                            type: string
+                          price:
+                            type: object
+                            properties:
+                              original_price:
+                                type: number
+                              sale_price:
+                                type: number
+                              extra_price:
+                                type: number
+                              payment_term:
+                                type: number
+                      amount:
+                        type: number
+                      amount_before_tax:
+                        type: number
+                      customer:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          phone:
+                            type: string
+                          email:
+                            type: string
+                          dob:
+                            type: string
+                          address:
+                            type: string
+                          nic:
+                            type: string
+                      payment:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            order_number:
+                              type: string
+                            payment_method:
+                              type: string
+                            payment_term:
+                              type: number
+                            amount:
+                              type: number
+                            discount_code:
+                              type: string
+                            discount_amount:
+                              type: number
+                            final_amount:
+                              type: number
+                            payment_status:
+                              type: number
+                      contract_files:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            filename:
+                              type: string
+                              description: "Tên file giấy chứng nhận"
+                            url:
+                              type: string
+                              description: "URL giấy chứng nhận"
+                      start_date:
+                        type: string
+                        format: date
+                      end_date:
+                        type: string
+                        format: date
+                      commissions:
+                        type: object
+                        properties:
+                          saleman_name:
+                            type: string
+                          commission_amount:
+                            type: number
+                          percent:
+                            type: number
+                            format: double
+                          level:
+                            type: number
+                          child:
+                            type: array
+                            items:
+                              type: object
+                      options:
+                        type: array
+                        items:
+                          type: object
+                      beneficiary:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            fullname:
+                              type: string
+                            gender:
+                              type: string
+                            birthday:
+                              type: string
+                              format: date
+                            nic:
+                              type: string
+                            nationality:
+                              type: string
+                  status_code:
+                    type: integer
+                    example: 201
+    InsuranceResponseError401:
+      type: object
+      properties:
+        status:
+          type: string
+        code:
+          type: integer
+        message:
+          type: string
+        errors:
+          type: string
+        status_code:
+          type: integer
+      required:
+        - status
+        - code
+        - message
+        - errors
+        - status_code
+    InsuranceResponseError422:
+      type: object
+      properties:
+        status:
+          type: string
+        code:
+          type: integer
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        status_code:
+          type: integer
+      required:
+        - status
+        - code
+        - message
+        - errors
+        - status_code
+    Login: 
+      type: object
+      properties:
+        username:
+          type: string
+          example: "Demosale_Quy"
+        password:
+          type: string
+          example: 123456
+    LoginResponse:
+      type: object
+      properties:
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+    InsuranceBody: 
+      type: object
+      properties:
+                code:
+                  type: string
+                phone:
+                  type: string
+                email:
+                  type: string
+                fullname:
+                  type: string
+                booking_email:
+                  type: string
+                booking_code:
+                  type: string
+                start_date:
+                  type: string
+                  format: date
+                carrier:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    code:
+                      type: string
+                    national:
+                      type: string
+                flight_number:
+                  type: string
+                start_time:
+                  type: string
+                departure_airport:
+                  type: string
+                arrival_airport:
+                  type: string
+                return:
+                  type: boolean
+                booking_code_return:
+                  type: string
+                end_date:
+                  type: string
+                  format: date
+                end_time:
+                  type: string
+                flight_number_return:
+                  type: string
+                return_carrier:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    code:
+                      type: string
+                    national:
+                      type: string
+                beneficiary_list:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      view_key:
+                        type: string
+                      fullname:
+                        type: string
+                      nic:
+                        type: string
+                      away:
+                        type: boolean
+                      return:
+                        type: boolean
+                options:
+                  type: array
+                  items:
+                    type: object
+                final_amount:
+                  type: number
+                ticket_price:
+                  type: number
+                  format: float
+                ticket_price_return:
+                  type: number
+                  format: float
+                  required:
+                  - code
+                  - phone
+                  - email
+                  - fullname
+                  - booking_email
+                  - booking_code
+                  - start_date
+                  - carrier
+                  - flight_number
+                  - start_time
+                  - departure_airport
+                  - arrival_airport
+                  - return
+                  - booking_code_return
+                  - end_date
+                  - end_time
+                  - flight_number_return
+                  - return_carrier
+                  - beneficiary_list
+                  - options
+                  - final_amount
+                  - ticket_price
+                  - ticket_price_return
+    
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
