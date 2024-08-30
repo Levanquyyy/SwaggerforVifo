@@ -1,0 +1,258 @@
+openapi: 3.0.3
+info:
+  title: Bảo hiểm tín dụng - OpenAPI 3.0
+  description: |
+    - Ban hành dành cho nhà cung cấp kết nối api với sản phẩm Bảo hiểm tín dụng
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://sapi.vifo.vn/
+  - url: https://api.vifo.vn/
+tags:
+  - name: Login
+    description: lấy access_token
+  - name: insurance
+    description: Tạo đơn bảo hiểm 
+paths:
+  /v1/clients/web/admin/login:
+    post:
+      tags:
+        - Login
+      summary: Add a UserName and Password
+      description: Add a UserName and Password
+      operationId: v1/clients/web/admin/login
+      requestBody:
+        description: After login, you will get a token
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'              
+  /v2/insurance:
+    post:
+      tags:
+        - insurance
+      summary: Tạo đơn hàng bảo hiểm
+      description: Tạo đơn hàng bảo hiểm
+      operationId: v2/insurance
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditSecurity'
+      responses:
+        '201':
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponse'
+        '422':
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponseError422'
+        '401':
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponseError401'
+  /v2/insurance/{key}:
+    get:
+      tags: 
+       - insurance
+      summary: Kiểm tra đơn hàng bảo hiểm 
+      operationId: Kiểm tra đơn hàng bảo hiểm 
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Order number received from the response of the create order API" 
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponseKey'
+components:
+  schemas:
+    CreditSecurity:
+      type: object
+      properties:
+        product_code:
+          type: string
+        fullname:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        provider_order_number:
+          type: string
+        start_date:
+          type: string
+          format: date
+        year:
+          type: string
+          nullable: true
+        end_date:
+          type: string
+          format: date
+        final_amount:
+          type: number
+          format: float
+        gender:
+          type: string
+        birthday:
+          type: string
+          format: date
+        nic:
+          type: string
+        ward:
+          type: string
+        district:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        options:
+          type: array
+          items:
+            type: object
+        no_contract:
+          type: string
+        contract_value:
+          type: number
+          format: float
+        percent:
+          type: number
+          format: float
+        month:
+          type: string
+        beneficiary_list:
+          type: array
+          items:
+            type: object
+            properties:
+              fullname:
+                type: string
+              address:
+                type: string
+              mst:
+                type: string
+              required_value:
+                type: number
+                format: float
+        attachment_url_files:
+          type: array
+          items:
+            type: string
+            format: uri
+    Login: 
+      type: object
+      properties:
+        username:
+          type: string
+          example: "Demosale_Quy"
+        password:
+          type: string
+          example: 123456
+
+    LoginResponse:
+      type: object
+      properties:
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+
+    InsuranceResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            key:
+              type: string
+            order_number:
+              type: string
+
+    InsuranceResponseError422:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        errors:
+          type: object
+
+    InsuranceResponseError401:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+
+    InsuranceResponseKey:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            key:
+              type: string
+            order_number:
+              type: string
+            insurance_status:
+              type: string
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
